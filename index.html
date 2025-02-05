@@ -2,14 +2,15 @@
 <html>
 <head>
 <title>Numbering System Converter - Lakh Crore Million Billion</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body {
   font-family: sans-serif;
+  margin: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  margin: 0;
 }
 
 .container {
@@ -27,7 +28,7 @@ input[type="number"] {
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 16px;
-  text-align: center; /* Center the text */
+  text-align: center;
 }
 select {
   margin-bottom: 20px;
@@ -53,6 +54,7 @@ select:focus {
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
+
 button {
   padding: 10px 20px;
   background-color: #0056b3;
@@ -73,25 +75,36 @@ button:hover {
   background-color: #004499;
 }
 
-h1 { /* Style the h1 (title) */
+h1 {
   color: #0056b3;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
-.separator { /* Style for the separator line */
-  border-top: 1px solid #ccc; /* Light gray line */
-  margin-bottom: 80px; /* Space below the line */
+
+.separator {
+  border-top: 1px solid #ccc;
+  margin-bottom: 20px;
 }
 
 #result {
   margin-top: 20px;
   font-weight: bold;
-  font-size: 1.5em; /* Make the text larger (adjust as needed) */
-  color: #0056b3; /* Set the text color to blue */
+  font-size: 1.5em;
+  color: #0056b3;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) { 
+  .container {
+    width: 90%; /* Make the container more responsive */
+    padding: 15px; /* Add more padding for mobile */
+  }
+  input[type="number"], select {
+    width: 100%; /* Make input and select elements full width */
+  }
 }
 
 </style>
 
-<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-39KMFTGZ8V"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -104,32 +117,33 @@ h1 { /* Style the h1 (title) */
 </head>
 <body>
 
-<div class="container"> 
+<div class="container">
   <h1>Numbering System Converter - Lakh Crore Million Billion</h1>
   <div class="separator"></div>
 
-<label for="amount">Amount:</label>
-<input type="number" id="amount" value="0">
+  <label for="amount">Amount:</label>
+  <input type="number" id="amount" value="0">
 
-<label for="from">From:</label>
-<select id="from">
-  <option value="crore">Crore</option>
-  <option value="lakh">Lakh</option>
-  <option value="million">Million</option>
-  <option value="billion">Billion</option>
-</select>
+  <label for="from">From:</label>
+  <select id="from">
+    <option value="crore">Crore</option>
+    <option value="lakh">Lakh</option>
+    <option value="million">Million</option>
+    <option value="billion">Billion</option>
+  </select>
 
-<label for="to">To:</label>
-<select id="to">
-  <option value="billion">Billion</option>
-  <option value="million">Million</option>
-  <option value="crore">Crore</option>
-  <option value="lakh">Lakh</option>
-</select>
+  <label for="to">To:</label>
+  <select id="to">
+    <option value="billion">Billion</option>
+    <option value="million">Million</option>
+    <option value="crore">Crore</option>
+    <option value="lakh">Lakh</option>
+  </select>
 
-<button onclick="convert()">Convert</button>
+  <button onclick="convert()">Convert</button>
 
-<div id="result"></div>
+  <div id="result"></div>
+</div>
 
 <script>
 function convert() {
@@ -177,6 +191,5 @@ function formatNumberWithCommas(number, unit) {
     return number.toLocaleString('en-IN'); // Indian locale for lakhs and crores (Indian format)
   }
 }</script>
-
 </body>
 </html>

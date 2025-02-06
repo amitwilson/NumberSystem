@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dollar Rupee Converter</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  font-family: sans-serif;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  text-align: center;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+input[type="number"] {
+  width: 200px;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  text-align: center;
+}
+select {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  font-size: 16px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: url("data:image/svg+xml;utf8,<svg fill='gray' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24h-24z' fill='none'/></svg>") no-repeat right 10px center;
+  padding-right: 30px;
+  transition: border-color 0.2s ease;
+}
+
+select:hover {
+  border-color: #aaa;
+}
+
+select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25em;
+  margin-top: 10px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 30px;
+  border-radius: 5px;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #004499;
+}
+
+h1 {
+  color: #0056b3;
+  margin-bottom: 20px;
+  font-size: 1.5em;
+}
+
+.separator {
+  border-top: 1px solid #ccc;
+  margin-bottom: 20px;
+}
+
+#result {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 1.3em;
+  color: #0056b3;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) { 
+  .container {
+    width: 90%; /* Make the container more responsive */
+    padding: 15px; /* Add more padding for mobile */
+  }
+  input[type="number"], select {
+    width: 100%; /* Make input and select elements full width */
+  }
+}
+
+</style>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-39KMFTGZ8V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-39KMFTGZ8V');
+</script>
+
+</head>
+<body>
+
+<div class="container">
+  <h1>Dollar Rupee Converter</h1>
+  <div class="separator"></div>
+
+  <label for="amount">Amount:</label>
+  <input type="number" id="amount" value="0">
+
+<label for="from">From:</label>
+<select id="from">
+  <option value="us_dollars">US Dollars</option>
+  <option value="us_dollars_million">US Dollars million</option>
+  <option value="us_dollars_billion">US Dollars billion</option>
+  <option value="rupees">Rupees</option>
+  <option value="rupees_lakh">Rupees lakh</option>
+  <option value="rupees_crore">Rupees crore</option>
+  
+</select>
+
+<label for="to">To:</label>
+<select id="to">
+  <option value="rupees">Rupees</option>
+  <option value="rupees_lakh">Rupees lakh</option>
+  <option value="rupees_crore">Rupees crore</option>
+  <option value="us_dollars">US Dollars</option>
+  <option value="us_dollars_million">US Dollars million</option>
+  <option value="us_dollars_billion">US Dollars billion</option>
+  
+</select>
+
+  <button onclick="convert()">Convert</button>
+
+  <div id="result"></div>
+  <a href="index.html" style="font-size: 0.8em; font-style: italic;">Numbering System Converter</a> </div>
+
+</div>
+
+<script>
+async function getExchangeRate() {
+  try {
+    const response = await fetch('https://api.frankfurter.dev/v1/latest?from=EUR&to=INR,USD'); // Get both INR and USD
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    const inrRate = data.rates.INR;
+    const usdRate = data.rates.USD;
+    const exchangeRate = inrRate / usdRate; // Calculate INR to USD rate
+    return exchangeRate;
+  } catch (error) {
+    console.error("Error fetching exchange rate:", error);
+    document.getElementById("result").textContent = "Error fetching exchange rate. Please try again later.";
+    return null;
+  }
+}
+
+async function convert() {
+  const amount = parseFloat(document.getElementById("amount").value);
+  const fromUnit = document.getElementById("from").value;
+  const toUnit = document.getElementById("to").value;
+  let result;
+
+  if (isNaN(amount)) {
+    document.getElementById("result").textContent = "Please enter a number";
+    return;
+  }
+
+  const exchangeRate = await getExchangeRate();
+  if (exchangeRate === null) return;
+
+  // Conversion logic:
+  switch (fromUnit) {
+    case "rupees":
+      switch (toUnit) {
+        case "us_dollars": result = amount / exchangeRate; break;
+        case "us_dollars_million": result = amount / exchangeRate / 1000000; break;
+        case "us_dollars_billion": result = amount / exchangeRate / 1000000000; break;
+      }
+      break;
+    case "rupees_lakh":
+      switch (toUnit) {
+        case "us_dollars": result = (amount * 100000) / exchangeRate; break;
+        case "us_dollars_million": result = (amount * 100000) / exchangeRate / 1000000; break;
+        case "us_dollars_billion": result = (amount * 100000) / exchangeRate / 1000000000; break;
+      }
+      break;
+    case "rupees_crore":
+      switch (toUnit) {
+        case "us_dollars": result = (amount * 10000000) / exchangeRate; break;
+        case "us_dollars_million": result = (amount * 10000000) / exchangeRate / 1000000; break;
+        case "us_dollars_billion": result = (amount * 10000000) / exchangeRate / 1000000000; break;
+      }
+      break;
+
+    case "us_dollars":
+      switch (toUnit) {
+        case "rupees": result = amount * exchangeRate; break;
+        case "rupees_lakh": result = (amount * exchangeRate) / 100000; break;
+        case "rupees_crore": result = (amount * exchangeRate) / 10000000; break;
+      }
+      break;
+    case "us_dollars_million":
+      switch (toUnit) {
+        case "rupees": result = amount * exchangeRate * 1000000; break;
+        case "rupees_lakh": result = (amount * exchangeRate * 1000000) / 100000; break;
+        case "rupees_crore": result = (amount * exchangeRate * 1000000) / 10000000; break;
+      }
+      break;
+    case "us_dollars_billion":
+      switch (toUnit) {
+        case "rupees": result = amount * exchangeRate * 1000000000; break;
+        case "rupees_lakh": result = (amount * exchangeRate * 1000000000) / 100000; break;
+        case "rupees_crore": result = (amount * exchangeRate * 1000000000) / 10000000; break;
+      }
+      break;
+  }
+
+let fromUnitDisplay = "";
+  let toUnitDisplay = "";
+
+  switch (fromUnit) {
+    case "rupees":
+      fromUnitDisplay = "Rs " + formatNumberWithCommas(amount, fromUnit);
+      break;
+    case "rupees_lakh":
+      fromUnitDisplay = "Rs " + formatNumberWithCommas(amount, fromUnit) + " lakh"; // Added "lakh"
+      break;
+    case "rupees_crore":
+      fromUnitDisplay = "Rs " + formatNumberWithCommas(amount, fromUnit) + " crore"; // Added "crore"
+      break;
+    case "us_dollars":
+      fromUnitDisplay = "$ " + formatNumberWithCommas(amount, fromUnit);
+      break;
+    case "us_dollars_million":
+      fromUnitDisplay = "$ " + formatNumberWithCommas(amount, fromUnit) + " million"; // Added "million"
+      break;
+    case "us_dollars_billion":
+      fromUnitDisplay = "$ " + formatNumberWithCommas(amount, fromUnit) + " billion"; // Added "billion"
+      break;
+  }
+
+  switch (toUnit) {
+    case "rupees":
+      toUnitDisplay = "Rs " + formatNumberWithCommas(result, toUnit);
+      break;
+    case "rupees_lakh":
+      toUnitDisplay = "Rs " + formatNumberWithCommas(result, toUnit) + " lakh"; // Added "lakh"
+      break;
+    case "rupees_crore":
+      toUnitDisplay = "Rs " + formatNumberWithCommas(result, toUnit) + " crore"; // Added "crore"
+      break;
+    case "us_dollars":
+      toUnitDisplay = "$ " + formatNumberWithCommas(result, toUnit);
+      break;
+    case "us_dollars_million":
+      toUnitDisplay = "$ " + formatNumberWithCommas(result, toUnit) + " million"; // Added "million"
+      break;
+    case "us_dollars_billion":
+      toUnitDisplay = "$ " + formatNumberWithCommas(result, toUnit) + " billion"; // Added "billion"
+      break;
+  }
+
+  document.getElementById("result").textContent = `${fromUnitDisplay} = ${toUnitDisplay}`;
+
+  /// Display exchange rate:
+  const exchangeRateDisplay = document.createElement("p");
+  exchangeRateDisplay.textContent = `Approximate exchange rate (INR to USD): ${exchangeRate.toFixed(4)}`;
+  exchangeRateDisplay.style.fontSize = "0.8em";
+  exchangeRateDisplay.style.fontStyle = "italic";
+  exchangeRateDisplay.style.marginTop = "10px";
+  exchangeRateDisplay.style.color = "#555"; // Dark grey color
+  exchangeRateDisplay.style.fontWeight = "normal"; // Remove bold
+  document.getElementById("result").appendChild(exchangeRateDisplay);
+
+}
+
+function formatNumberWithCommas(number, unit) {
+  let formattedNumber;
+  if (unit.startsWith("us_dollars")) {
+    formattedNumber = number.toLocaleString('en-US', { // US locale for dollars
+      style: 'decimal',
+      maximumFractionDigits: 2, // Adjust decimal places as needed
+      minimumFractionDigits: 2
+    });
+  } else {
+    formattedNumber = number.toLocaleString('en-IN', { // Indian locale for Rupees
+      style: 'decimal',
+      maximumFractionDigits: 2,
+      minimumFractionDigits: 2
+    });
+  }
+  return formattedNumber;
+}
+
+</script>
+
+</body>
+</html>
